@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.js": "/react-home-work/hw1/static/js/main.8e0319b6.js",
-    "index.html": "/react-home-work/hw1/index.html",
-    "main.8e0319b6.js.map": "/react-home-work/hw1/static/js/main.8e0319b6.js.map"
+    "main.js": "/react-home-work/hw1/build/static/js/main.8e0319b6.js",
+    "index.html": "/react-home-work/hw1/build/index.html",
+    "main.8e0319b6.js.map": "/react-home-work/hw1/build/static/js/main.8e0319b6.js.map"
   },
   "entrypoints": [
     "static/js/main.8e0319b6.js"
