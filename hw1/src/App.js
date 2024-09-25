@@ -3,17 +3,20 @@ import ImageComponent from "./components/ImageComponent";
 import VideoComponent from "./components/VideoComponent";
 import ParagraphsComponent from "./components/ParagraphsComponent";
 import ListsComponent from "./components/ListsComponent";
+import styles from './App.module.css'; // Импортируем CSS-модуль
 
 function App() {
   return (
     <div className="App">
-      <HeaderComponetnt/>
-      <ImageComponent/>
-      <VideoComponent/>
-      <ParagraphsComponent title="ParagraphsComponent 1" text="Создать новый компонент, назовите его ParagraphsComponent,"/>
-      <ParagraphsComponent title="ParagraphsComponent 2" text="пусть он возвращает несколько параграфов текста с заголовками"/>
-      <ListsComponent title="неупорядоченный" type="ul"/>
-      <ListsComponent title="упорядоченный" type="ol"/>
+      <div className={styles.container}>
+        <HeaderComponetnt />
+        <ImageComponent />
+        <VideoComponent />
+        <ParagraphsComponent title="ParagraphsComponent 1" text="Создать новый компонент, назовите его ParagraphsComponent," />
+        <ParagraphsComponent title="ParagraphsComponent 2" text="пусть он возвращает несколько параграфов текста с заголовками" />
+        <ListsComponent title="неупорядоченный" type="ul" />
+        <ListsComponent title="упорядоченный" type="ol" />
+      </div>
     </div>
   );
 }
