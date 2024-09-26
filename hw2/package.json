@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "home": "https://serpanteam.github.io/react-home-work/hw2/dist/",
+  "homepage": "https://serpanteam.github.io/react-home-work/hw2/dist/",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
