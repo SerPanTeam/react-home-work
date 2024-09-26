@@ -1,0 +1,1 @@
+{"version":3,"file":"static/css/main.b38ea3f8.css","mappings":"AAAA,sBAII,kBAAmB,CAHnB,YAAa,CACb,qBAAsB,CACtB,sBAGJ","sources":["App.module.css"],"sourcesContent":[".container {\r\n    display: flex;\r\n    flex-direction: column;\r\n    justify-content: center;\r\n    align-items: center;\r\n    /* height: 100vh; */\r\n}"],"names":[],"sourceRoot":""}
