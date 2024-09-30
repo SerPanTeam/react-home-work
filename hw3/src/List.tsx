@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styles from "./List.module.css"
+import styles from "./List.module.css";
 export default function List() {
   const [people, setPeople] = useState([
     { id: 1, name: "Иван", age: 20 },
@@ -16,10 +16,16 @@ export default function List() {
     <ul className={styles.list}>
       {people.map((val) => {
         return (
-          <li key={val.id}>
-            {val.name} <button onClick={() => {
-               setPeople(people.filter(item=>item.id!=val.id)) 
-            }}>x</button>
+          <li className={styles.listItem} key={val.id}>
+            {val.name}{" "}
+            <button
+              className={styles.removeButton}
+              onClick={() => {
+                setPeople(people.filter((item) => item.id != val.id));
+              }}
+            >
+              x
+            </button>
           </li>
         );
       })}
