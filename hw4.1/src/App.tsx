@@ -1,8 +1,7 @@
 import { useState } from "react";
 import CitySelector from "./CitySelector";
 import CityCard from "./CityCard";
-import { City } from "./types"; // Импортируем интерфейс
-
+import { City } from "./types"; 
 const citiesData: City[] = [
   {
     name: "Токио",
