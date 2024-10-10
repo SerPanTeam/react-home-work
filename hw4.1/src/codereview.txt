@@ -1,0 +1,189 @@
+
+==== Файл: /c/repositories/ICH/react/react-home-work/hw4.1/src/App.tsx ====
+
+import { useState } from "react";
+import CitySelector from "./CitySelector";
+import CityCard from "./CityCard";
+import { City } from "./types"; // Импортируем интерфейс
+
+const citiesData: City[] = [
+  {
+    name: "Токио",
+    description:
+      "Столица Японии, известная своими неоновыми огнями, многолюдностью и современной архитектурой.",
+    imageUrl:
+      "https://www.topmagazine.cz/wp-content/uploads/2021/06/tokio-1024x576.jpg",
+    facts: [
+      "Токио - самый населенный мегаполис в мире.",
+      "Здесь расположена самая высокая башня в Японии - Токийская башня.",
+      "В Токио проходят множество культурных событий и фестивалей.",
+    ],
+  },
+  {
+    name: "Киото",
+    description:
+      "Город на острове Хонсю, известный своими многочисленными классическими буддийскими храмами, а также садами, императорскими дворцами, синтоистскими святилищами и традиционными деревянными домами.",
+    imageUrl:
+      "https://img.freepik.com/free-photo/red-tori-gate-fushimi-inari-shrine-temple-kyoto-japan_1232-2279.jpg?t=st=1728389503~exp=1728393103~hmac=a844d4193db48414278c99407934bf1d19e5731d4abfb52beb8e90c7e4d64b5c&w=740",
+    facts: [
+      "В Киото насчитывается более 1600 буддийских храмов.",
+      "Этот город был столицей Японии более тысячи лет.",
+    ],
+  },
+  {
+    name: "Осака",
+    description:
+      "Город в центральной части острова Хонсю, известен своими современными достопримечательностями и активной ночной жизнью.",
+    imageUrl:
+      "https://img.freepik.com/free-photo/matsumoto-castle-osaka-japan_1150-11177.jpg?t=st=1728389583~exp=1728393183~hmac=2d3f90aec5d0f17738fc6b3becfc8674d838d72e889378e50ccc0d9ca8b77340&w=740",
+    facts: [
+      "Осака известна своим замком, который играл ключевую роль в объединении Японии в XVI веке.",
+      "Город является кулинарной столицей Японии.",
+    ],
+  },
+  {
+    name: "Хоккайдо",
+    description:
+      "Самый северный остров Японии, известный своей природой, снежными фестивалями и уникальной культурой.",
+    imageUrl:
+      "http://i1.wallbox.ru/wallpapers/main2/202201/nebo-ozero-gory-aponia-hokkajdo-asahi.jpg",
+    facts: [
+      "Хоккайдо предлагает отличные условия для зимних видов спорта, особенно для лыжного спорта и сноубординга.",
+      "Летом остров привлекает туристов своими цветущими лавандовыми полями.",
+    ],
+  },
+  {
+    name: "Нагоя",
+    description:
+      "Город в центре Хонсю, известен своим отраслевым влиянием и историческими достопримечательностями.",
+    imageUrl:
+      "https://www.jalan.net/jalan/images/pict3L/Y1/Y329551/Y329551055.jpg",
+    facts: [
+      "Нагоя - один из важнейших промышленных городов Японии, центр автомобилестроения.",
+      "Здесь находится известный Нагойский замок с позолоченными делфинами на крыше.",
+    ],
+  },
+];
+
+const citiesMap: { [key: string]: City } = {};
+citiesData.forEach((val) => {
+  citiesMap[val.name] = val;
+});
+
+function App() {
+  const [city, setCity] = useState<City>(citiesData[0]);
+  const onCitySelect = (city: string) => {
+    const curCity = citiesMap[city];
+    if (curCity) setCity(curCity);
+    else console.warn(`Город с названием "${city}" не найден.`);
+  };
+
+  return (
+    <>
+      <header>
+        <h1 style={{ textAlign: "center" }}>React домашнее задание 4</h1>
+      </header>
+      <main
+        className="container"
+        style={{
+          maxWidth: "700px",
+          padding: "20px",
+        }}
+      >
+        <article>
+          <CitySelector
+            citiesData={citiesData}
+            onCitySelect={onCitySelect}
+            selectedCityName={city.name}
+          ></CitySelector>
+          <CityCard city={city}></CityCard>
+        </article>
+      </main>
+    </>
+  );
+}
+
+export default App;
+
+==== Файл: /c/repositories/ICH/react/react-home-work/hw4.1/src/CityCard.tsx ====
+
+import { City } from "./types";
+
+interface CityCardProps {
+  city: City;
+}
+export default function CityCard({ city }: CityCardProps) {
+  return (
+    <section>
+      <h2>{city.name}</h2>
+      <img src={city.imageUrl} alt={city.name} className="fluid"/>
+      <p>{city.description}</p>
+      <ul>
+        {city.facts.map((val: string) => {
+          return <li key={val}>{val}</li>;
+        })}
+      </ul>
+    </section>
+  );
+}
+
+==== Файл: /c/repositories/ICH/react/react-home-work/hw4.1/src/CitySelector.tsx ====
+
+import { City } from "./types"; // Импортируем интерфейс
+
+interface CitySelectorProps {
+  citiesData: City[]; // Пропсы с массивом данных о городах
+  onCitySelect: (cityName: string) => void; // Пропс для обработки выбора города
+  selectedCityName: string;
+}
+
+export default function CitySelector({
+  citiesData,
+  onCitySelect,
+  selectedCityName,
+}: CitySelectorProps) {
+  return (
+    <>
+      <label htmlFor="city-select">Выберите город:</label>
+
+      <select
+        id="city-select"
+        value={selectedCityName}
+        onChange={(e) => onCitySelect(e.target.value)}
+      >
+        {citiesData.map((val, i) => {
+          return (
+            <option key={i + "-" + val.name} value={val.name}>
+              {val.name}
+            </option>
+          );
+        })}
+      </select>
+    </>
+  );
+}
+
+==== Файл: /c/repositories/ICH/react/react-home-work/hw4.1/src/main.tsx ====
+
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import App from './App.tsx'
+//import './index.css'
+import '@picocss/pico/css/pico.min.css';
+
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+
+==== Файл: /c/repositories/ICH/react/react-home-work/hw4.1/src/types.ts ====
+
+export interface City {
+    name: string;
+    imageUrl: string;
+    description: string;
+    facts: string[];
+  }
+  
