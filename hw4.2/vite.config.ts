@@ -4,6 +4,6 @@ import react from '@vitejs/plugin-react-swc'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: "/react-home-work/hw4.1/dist/",
+  base: "/react-home-work/hw4.2/dist/",
 
 })
