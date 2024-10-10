@@ -10,6 +10,7 @@ function App() {
       style={{
         width: "100%",
         //maxWidth: "700px",
+        //
         padding: "20px",
       }}
     >
