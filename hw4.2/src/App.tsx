@@ -9,6 +9,8 @@ function App() {
   const [firstNum, setfirstNum] = useState(getRndNum());
   const [secondNum, setSecondNum] = useState(getRndNum());
   const [inputState, setInputState] = useState();
+  const [inputValue, setInputValue] = useState('');
+
 
   function checkAnswer(e: Event) {
     e.preventDefault();
@@ -17,7 +19,7 @@ function App() {
       if (curAnswer.value == (firstNum + secondNum)) {
         setInputState(false);
         setCount((cur) => cur + 1);
-        curAnswer.value = "";
+        setInputValue("");
         setfirstNum(getRndNum());
         setSecondNum(getRndNum());
         setInputState("");
