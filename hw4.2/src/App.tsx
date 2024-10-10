@@ -8,26 +8,23 @@ function App() {
   const [count, setCount] = useState(0);
   const [firstNum, setfirstNum] = useState(getRndNum());
   const [secondNum, setSecondNum] = useState(getRndNum());
-  const [inputState, setInputState] = useState();
-  const [inputValue, setInputValue] = useState('');
+  const [inputState, setInputState] = useState<boolean | undefined>(undefined);
+  const [inputValue, setInputValue] = useState("");
 
-
-  function checkAnswer(e: Event) {
+  function checkAnswer(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const curAnswer = document.querySelector("#answer");
-    if (curAnswer)
-      if (curAnswer.value == (firstNum + secondNum)) {
-        setInputState(false);
-        setCount((cur) => cur + 1);
-        setInputValue("");
-        setfirstNum(getRndNum());
-        setSecondNum(getRndNum());
-        setInputState("");
-
-      }
-      else {
-        setInputState(true);
-      }
+    const curAnswer = inputValue; //document.querySelector<HTMLInputElement>("#answer");
+    // if (curAnswer)
+    if (parseInt(curAnswer) === firstNum + secondNum) {
+      setInputState(false);
+      setCount((cur) => cur + 1);
+      setInputValue("");
+      setfirstNum(getRndNum());
+      setSecondNum(getRndNum());
+      setInputState(undefined);
+    } else {
+      setInputState(true);
+    }
   }
 
   return (
@@ -44,15 +41,24 @@ function App() {
       <h1>Math Quiz</h1>
       <article className="container">
         <h2>Ваши очки: {count}</h2>
-        <h3>{firstNum} + {secondNum} = ?</h3>
-        <form onSubmit={(e) => checkAnswer(e)} >
+        <h3>
+          {firstNum} + {secondNum} = ?
+        </h3>
+        <form onSubmit={(e) => checkAnswer(e)}>
           <fieldset role="group">
-            <input aria-invalid={inputState} id="answer" name="answer" placeholder="Введите ответ" />
+            <input
+              aria-invalid={inputState}
+              id="answer"
+              name="answer"
+              placeholder="Введите ответ"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+            />
             <input type="submit" value="Проверить" />
           </fieldset>
         </form>
       </article>
-    </main >
+    </main>
   );
 }
 
