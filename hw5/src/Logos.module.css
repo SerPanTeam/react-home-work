@@ -1,0 +1,21 @@
+/* src/App.module.css */
+
+/* Контейнер для всех иконок */
+.appleLogoContainer {
+  display: inline-block;
+  transition: transform 0.3s ease, fill 0.3s ease; /* Плавное перемещение и изменение цвета */
+  cursor: pointer; /* Указатель мыши при наведении */
+}
+
+.appleLogoContainer:hover {
+  transform: translateY(-10px); /* Сдвиг иконки вверх на 10px при наведении */
+}
+
+/* Дополнительный стиль для цвета при наведении */
+.appleLogoContainer svg path {
+  transition: fill 0.3s ease; /* Плавное изменение цвета заливки */
+}
+
+.appleLogoContainer:hover svg path {
+  fill: #1181f1;
+}
