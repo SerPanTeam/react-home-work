@@ -7,10 +7,10 @@ export default defineConfig({
   plugins: [
     svgr({
       svgrOptions: {
-        exportType: 'named', // Устанавливаем экспорт как именованный
+        exportType: 'named',
       },
     }),
     react(),
   ],
-  base: "/react-home-work/hw4.2/dist/",
+  base: "/react-home-work/hw5/dist/",
 });
