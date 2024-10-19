@@ -1,7 +1,12 @@
-import { createContext, useState } from "react";
-
-export const LanguageContext = createContext("en");
-export const LanguageProvider = ({ children }) => {
+import { createContext, ReactNode, useState } from "react";
+interface LanguageContextType {
+  language: string;
+  switchLanguage: () => void;
+}
+export const LanguageContext = createContext<LanguageContextType | undefined>(
+  undefined
+);
+export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [language, setLanguage] = useState("en");
   const switchLanguage = () => {
     setLanguage((prevLang: string) => (prevLang === "en" ? "ru" : "en"));
