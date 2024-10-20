@@ -7,12 +7,14 @@
 ├── src
 │   ├── assets
 │   │   └── react.svg
-│   ├── copmonents
+│   ├── components
 │   │   ├── Footer.tsx
 │   │   ├── Header.tsx
-│   │   └── Main.tsx
+│   │   ├── Main.tsx
+│   │   └── SwitchLanguage.tsx
 │   ├── App.tsx
 │   ├── LanguageContext.tsx
+│   ├── localization.ts
 │   ├── main.tsx
 │   └── vite-env.d.ts
 ├── .gitignore
@@ -37,15 +39,21 @@
 ```typescript
 import "@picocss/pico/css/pico.min.css";
 import { LanguageProvider } from "./LanguageContext";
-import Header from "./copmonents/Header";
-import Main from "./copmonents/Main";
-import Footer from "./copmonents/Footer";
+import Header from "./components/Header";
+import Main from "./components/Main";
+import Footer from "./components/Footer";
+import SwitchLanguage from "./components/SwitchLanguage";
 function App() {
   return (
     <LanguageProvider>
-      <Header></Header>
-      <Main></Main>
-      <Footer></Footer>
+      <div className="container">
+        <SwitchLanguage/>
+        <article>
+          <Header></Header>
+          <Main></Main>
+        </article>
+        <Footer></Footer>
+      </div>
     </LanguageProvider>
   );
 }
@@ -54,73 +62,131 @@ export default App;
 
 ```
 
-## src\copmonents\Footer.tsx
+## src\components\Footer.tsx
 
 ```typescript
+import { useLang} from "../localization";
 export default function Footer() {
-    return (
-      <footer>
-        <p>Lorem ipsum dolor sit amet.</p>
-      </footer>
-    );
-  }
-  
-```
-
-## src\copmonents\Header.tsx
-
-```typescript
-import { useContext } from "react";
-import { LanguageContext } from "../LanguageContext";
-
-export default function Header() {
-  const {language, switchLanguage } = useContext(LanguageContext);
+  const { language, t  } = useLang();
   return (
-    <header>
-      <h1>Title</h1>
-      <button>Change language({language})</button>
-    </header>
+    <footer>
+      <p>{t(language, "footer")}</p>
+    </footer>
   );
 }
 
 ```
 
-## src\copmonents\Main.tsx
+## src\components\Header.tsx
 
 ```typescript
+import { useLang } from "../localization";
+
+export default function Header() {
+  const { language, t } = useLang();
+  return (
+    <h1>{t(language, "title")}</h1>
+  );
+}
+
+```
+
+## src\components\Main.tsx
+
+```typescript
+import { useLang } from "../localization";
+
 export default function Main() {
+  const { language, t } = useLang();
+
+  return (
+    <main>
+      <p>{t(language, "description")}</p>
+    </main>
+  );
+}
+
+```
+
+## src\components\SwitchLanguage.tsx
+
+```typescript
+import { useLang } from "../localization";
+export default function SwitchLanguage() {
+    const { language, switchLanguage, t } = useLang();
     return (
-      <main>
-        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Temporibus, animi!</p>
-      </main>
+        <header style={{ display: "flex", justifyContent: "flex-end" }}>
+            <button onClick={switchLanguage}>
+                {t(language, "changeLanguage") + ` (${language})`}
+            </button>
+        </header>
     );
-  }
-  
+}
 ```
 
 ## src\LanguageContext.tsx
 
 ```typescript
 import { createContext, ReactNode, useState } from "react";
+import { TranslationKeys, LanguagesKeys, t } from './localization';
 interface LanguageContextType {
-  language: string;
+  language: LanguagesKeys;
   switchLanguage: () => void;
+  t: (lang: LanguagesKeys, part: TranslationKeys) => string;
 }
-export const LanguageContext = createContext<LanguageContextType | undefined>(
-  undefined
-);
+
+export const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const [language, setLanguage] = useState("en");
+  const [language, setLanguage] = useState<LanguagesKeys>("en");
   const switchLanguage = () => {
-    setLanguage((prevLang: string) => (prevLang === "en" ? "de" : "en"));
+    setLanguage((prevLang) => (prevLang === "en" ? "de" : "en"));
   };
   return (
-    <LanguageContext.Provider value={{ language, switchLanguage }}>
+    <LanguageContext.Provider value={{ language, switchLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );
 };
 
+
+```
+
+## src\localization.ts
+
+```typescript
+import { LanguageContext } from "./LanguageContext";
+import { useContext } from "react";
+
+export type TranslationKeys = 'title' | 'changeLanguage' | 'description' | 'footer';
+export type LanguagesKeys = 'en' | 'de';
+
+const localization = {
+    de: {
+        title: "Hausaufgabe sieben",
+        changeLanguage: "Sprache ändern",
+        description: "Dies ist ein Beispiel für eine mehrsprachige Anwendung.",
+        footer: "© 2024 Ihr Unternehmen. Alle Rechte vorbehalten."
+    },
+    en: {
+        title: "Homework seven",
+        changeLanguage: "Change language",
+        description: "This is an example of a multilingual application.",
+        footer: "© 2024 Your Company. All rights reserved."
+    }
+};
+
+export function t(lang: LanguagesKeys, part: TranslationKeys): string {
+    return localization[lang][part];
+}
+
+export function useLang() {
+
+    const context = useContext(LanguageContext);
+    if (context)
+        return context;
+    else
+        throw new Error("Error in context!");
+}
 ```
 
 ## src\main.tsx

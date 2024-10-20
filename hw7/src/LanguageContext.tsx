@@ -1,23 +1,21 @@
-import { createContext, ReactNode, useState, useContext } from "react";
+import { createContext, ReactNode, useState } from "react";
+import { TranslationKeys, LanguagesKeys, t } from './localization';
 interface LanguageContextType {
-  language: string;
+  language: LanguagesKeys;
   switchLanguage: () => void;
+  t: (lang: LanguagesKeys, part: TranslationKeys) => string;
 }
-export const LanguageContext = createContext<LanguageContextType | undefined>(
-  undefined
-);
+
+export const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const [language, setLanguage] = useState("en");
+  const [language, setLanguage] = useState<LanguagesKeys>("en");
   const switchLanguage = () => {
-    setLanguage((prevLang: string) => (prevLang === "en" ? "de" : "en"));
+    setLanguage((prevLang) => (prevLang === "en" ? "de" : "en"));
   };
   return (
-    <LanguageContext.Provider value={{ language, switchLanguage }}>
+    <LanguageContext.Provider value={{ language, switchLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );
 };
 
-export function useLang() {
-  return useContext(LanguageContext);
-}

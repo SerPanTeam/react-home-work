@@ -1,8 +1,11 @@
+import { useLang } from "../localization";
+
 export default function Main() {
-    return (
-      <main>
-        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Temporibus, animi!</p>
-      </main>
-    );
-  }
-  
+  const { language, t } = useLang();
+
+  return (
+    <main>
+      <p>{t(language, "description")}</p>
+    </main>
+  );
+}
