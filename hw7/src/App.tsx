@@ -1,22 +1,18 @@
 import "@picocss/pico/css/pico.min.css";
 import { LanguageProvider } from "./LanguageContext";
-
+import Header from "./components/Header";
+import Main from "./components/Main";
+import Footer from "./components/Footer";
 function App() {
   return (
     <LanguageProvider>
       <div className="container">
-        <header>
-          <select
-            name="favorite-cuisine"
-            aria-label="Select your language"
-            required
-          >
-            <option selected value="en">
-              English
-            </option>
-            <option value="de">Deutsch</option>
-          </select>
-        </header>
+        
+        <article>
+          <Header></Header>
+          <Main></Main>
+        </article>
+        <Footer></Footer>
       </div>
     </LanguageProvider>
   );
