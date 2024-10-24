@@ -1,0 +1,24 @@
+ .main {
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     height: 100vh;
+ }
+
+
+
+ label {
+     white-space: nowrap;
+ }
+
+ .row {
+     display: flex;
+     flex-direction: row;
+     gap: 10px;
+     justify-content: flex-start;
+     align-items: center;
+ }
+
+ .row input{
+    width: 80px;
+ }
