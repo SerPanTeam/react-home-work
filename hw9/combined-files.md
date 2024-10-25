@@ -36,10 +36,11 @@
      display: flex;
      justify-content: center;
      align-items: center;
-     height: 100vh;
  }
 
-
+ article{
+    width: 600px;
+ }
 
  label {
      white-space: nowrap;
@@ -54,73 +55,163 @@
  }
 
  .row input{
-    width: 80px;
+    width: 120px;
+ }
+
+
+ .row .price{
+    width: 180px;
+ }
+
+
+ form button{
+    width: 100%;
  }
 ```
 
 ## src\App.tsx
 
 ```typescript
-import { useForm } from 'react-hook-form';
+import { useForm } from "react-hook-form";
 // import { useState } from 'react'
-import Select from "./Select"
+import Select from "./Select";
 import "./App.css";
 
 interface IdataForm {
-  type: string,
-  vid: string,
-  typeDom: string,
-  roomMin: number,
-  roomMax: number,
+  type: string;
+  vid: string;
+  typeDom: string;
+  roomMin: number;
+  roomMax: number;
+  sotMin: number;
+  sotMax: number;
+  priceMin: number;
+  priceMax: number;
 }
 
 function App() {
-  const { register, handleSubmit, watch } = useForm<IdataForm>();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, dirtyFields, isSubmitting },
+    reset,
+  } = useForm<IdataForm>({ mode: "onChange" });
   const vidValue = watch("vid");
 
-
-  function onSubmit(data: IdataForm) {
+  async function onSubmit(data: IdataForm) {
+    await new Promise(resolve => setTimeout(resolve, 2000));
     console.log(data);
   }
 
+  function getAriaInvalid(inputName: keyof typeof dirtyFields) {
+
+    if (errors[inputName]) return { "aria-invalid": true };
+    if (dirtyFields[inputName]) return { "aria-invalid": false }
+    else return {};
+  }
+
   return (
-    <main className='container main'>
+    <main className="container main">
       <article>
         <h1>Поиск</h1>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Select defaultValue="Аренда или продажа" optionsArray={["Аренда", "Продажа"]} register={register("type")} />
-          <Select defaultValue="Вид недвижимости" optionsArray={["Квартира", "Дом", "Участок"]} register={register("vid")} />
-          {
-            vidValue === "Дом" &&
-            <Select defaultValue="Тип дома" optionsArray={["Дом", "Часть дома", "Дача"]} register={register("typeDom")} />
-          }
-          {
-            (vidValue === "Дом" || vidValue === "Квартира") &&
-            <div className='row'>
+          <Select
+            defaultValue="Аренда или продажа"
+            optionsArray={["Аренда", "Продажа"]}
+            register={register("type")}
+          />
+          <Select
+            defaultValue="Вид недвижимости"
+            optionsArray={["Квартира", "Дом", "Участок"]}
+            register={register("vid")}
+          />
+          {vidValue === "Дом" && (
+            <Select
+              defaultValue="Тип дома"
+              optionsArray={["Дом", "Часть дома", "Дача"]}
+              register={register("typeDom")}
+            />
+          )}
+          {(vidValue === "Дом" || vidValue === "Квартира") && (
+            <div className="row">
               <label htmlFor="">Комнат от: </label>
-              <input type="number" {...register("roomMin", { min: { value: 1, message: "Минимум 1 комната" } })} />
+              <input
+                type="number"
+                {...register("roomMin", {
+                  min: { value: 1, message: "Минимум 1 комната" },
+                  max: { value: 1, message: "Максимум 10 комнат" },
+                })}
+                {...getAriaInvalid("roomMin")}
+              />
               <label htmlFor="">до:</label>
-              <input type="number" {...register("roomMax", { min: 0 })} />
+              <input
+                type="number"
+                {...register("roomMax", {
+                  min: { value: 1, message: "Минимум 1 комната" },
+                  max: { value: 1, message: "Максимум 10 комнат" },
+                })}
+                {...getAriaInvalid("roomMax")}
+              />
             </div>
-          }
-          {
-            (vidValue === "Дом" || vidValue === "Участок") &&
-            <div className='row'>
+          )}
+          {(vidValue === "Дом" || vidValue === "Участок") && (
+            <div className="row">
               <label htmlFor="">Участок от(сот.): </label>
-              <input type="number" />
+              <input type="number"
+                {...register("sotMin", {
+                  min: { value: 0, message: "Минимум 0 соток" },
+                })}
+                {...getAriaInvalid("sotMin")}
+              />
               <label htmlFor="">до:</label>
-              <input type="number" />
+              <input type="number"
+                {...register("sotMax", {
+                  min: { value: 0, message: "Минимум 0 соток" },
+                })}
+                {...getAriaInvalid("sotMax")}
+              />
             </div>
-          }
-          <button type='submit'>Поиск</button>
-          <button type='reset'>Очистить</button>
+          )}
+          <div className="row">
+            <label htmlFor="">Цена от($): </label>
+            <input className="price" type="number"
+              {...register("priceMin", {
+                min: { value: 0, message: "Цена не ниже нуля" },
+              })}
+              {...getAriaInvalid("priceMin")}
+            />
+            <label htmlFor="">до:</label>
+            <input className="price" type="number"
+              {...register("priceMax", {
+                min: { value: 0, message: "Цена не ниже нуля" },
+              })}
+              {...getAriaInvalid("priceMax")}
+            />
+          </div>
+          <button aria-busy={isSubmitting} type="submit" onClick={handleSubmit(onSubmit)}>
+            Поиск
+          </button>
+          <button type="reset" onClick={reset}>
+            Очистить
+          </button>
+          <div className="errors">
+            <p style={{ color: "red" }}>
+              {(Object.keys(errors) as (keyof IdataForm)[]).map((errorKey, i) => (
+                <>
+                  {((i > 0) && (errors[errorKey]?.message) ? ", " : "") + errors[errorKey]?.message}
+                </>
+              ))
+              }
+            </p>
+          </div>
         </form>
       </article>
     </main>
-  )
+  );
 }
 
-export default App
+export default App;
 
 ```
 

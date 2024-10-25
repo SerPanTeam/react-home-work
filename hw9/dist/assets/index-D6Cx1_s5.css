@@ -1,0 +1,1 @@
+.main{display:flex;justify-content:center;align-items:center}article{width:600px}label{white-space:nowrap}.row{display:flex;flex-direction:row;gap:10px;justify-content:flex-start;align-items:center}.row input{width:120px}.row .price{width:180px}form button{width:100%}

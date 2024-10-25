@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 // import { useState } from 'react'
 import Select from "./Select";
 import "./App.css";
@@ -9,20 +9,38 @@ interface IdataForm {
   typeDom: string;
   roomMin: number;
   roomMax: number;
+  sotMin: number;
+  sotMax: number;
+  priceMin: number;
+  priceMax: number;
 }
 
 function App() {
   const {
+    control,
     register,
     handleSubmit,
     watch,
-    formState: { errors, dirtyFields },
+    formState: { errors, dirtyFields, isSubmitting },
     reset,
-  } = useForm<IdataForm>();
+  } = useForm<IdataForm>({ mode: "onChange" });
+
   const vidValue = watch("vid");
 
-  function onSubmit(data: IdataForm) {
+  const allFields = useWatch({ control });
+
+
+
+  async function onSubmit(data: IdataForm) {
+    await new Promise(resolve => setTimeout(resolve, 2000));
     console.log(data);
+  }
+
+  function getAriaInvalid(inputName: keyof typeof dirtyFields) {
+
+    if (errors[inputName]) return { "aria-invalid": true };
+    if (dirtyFields[inputName]) return { "aria-invalid": false }
+    else return {};
   }
 
   return (
@@ -54,42 +72,73 @@ function App() {
                 type="number"
                 {...register("roomMin", {
                   min: { value: 1, message: "Минимум 1 комната" },
+                  max: { value: 10, message: "Максимум 10 комнат" },
+                  validate: val => (!allFields.roomMax) || (val <= allFields?.roomMax) || "Количество комнат 'от' должно быть меньше или равно 'до'"
                 })}
-                {...(errors.roomMin
-                  ? { "aria-invalid": true }
-                  : dirtyFields.roomMin
-                  ? { "aria-invalid": false }
-                  : {})}
+                {...getAriaInvalid("roomMin")}
               />
               <label htmlFor="">до:</label>
               <input
                 type="number"
                 {...register("roomMax", {
                   min: { value: 1, message: "Минимум 1 комната" },
+                  max: { value: 10, message: "Максимум 10 комнат" },
+                  validate: val => (!allFields.roomMin) || (val >= allFields?.roomMin) || "Количество комнат 'до' должно быть меньше или равно 'от'"
+
                 })}
+                {...getAriaInvalid("roomMax")}
               />
             </div>
           )}
           {(vidValue === "Дом" || vidValue === "Участок") && (
             <div className="row">
               <label htmlFor="">Участок от(сот.): </label>
-              <input type="number" />
+              <input type="number"
+                {...register("sotMin", {
+                  min: { value: 0, message: "Минимум 0 соток" },
+                })}
+                {...getAriaInvalid("sotMin")}
+              />
               <label htmlFor="">до:</label>
-              <input type="number" />
+              <input type="number"
+                {...register("sotMax", {
+                  min: { value: 0, message: "Минимум 0 соток" },
+                })}
+                {...getAriaInvalid("sotMax")}
+              />
             </div>
           )}
-          <button type="submit" onClick={console.log(errors)}>
+          <div className="row">
+            <label htmlFor="">Цена от($): </label>
+            <input className="price" type="number"
+              {...register("priceMin", {
+                min: { value: 0, message: "Цена не ниже нуля" },
+              })}
+              {...getAriaInvalid("priceMin")}
+            />
+            <label htmlFor="">до:</label>
+            <input className="price" type="number"
+              {...register("priceMax", {
+                min: { value: 0, message: "Цена не ниже нуля" },
+              })}
+              {...getAriaInvalid("priceMax")}
+            />
+          </div>
+          <button aria-busy={isSubmitting} type="submit" onClick={handleSubmit(onSubmit)}>
             Поиск
           </button>
           <button type="reset" onClick={reset}>
             Очистить
           </button>
           <div className="errors">
-            {(Object.keys(errors) as (keyof IdataForm)[]).map((errorKey) => (
-              <p key={errorKey} style={{ color: "red" }}>
-                {errors[errorKey]?.message}
-              </p>
-            ))}
+            <p style={{ color: "red" }}>
+              {(Object.keys(errors) as (keyof IdataForm)[]).map((errorKey, i) => (
+                <>
+                  {((i > 0) && (errors[errorKey]?.message) ? ", " : "") + errors[errorKey]?.message}
+                </>
+              ))
+              }
+            </p>
           </div>
         </form>
       </article>

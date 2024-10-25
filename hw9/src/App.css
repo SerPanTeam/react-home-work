@@ -21,5 +21,15 @@
  }
 
  .row input{
-    width: 110px;
+    width: 120px;
+ }
+
+
+ .row .price{
+    width: 180px;
+ }
+
+
+ form button{
+    width: 100%;
  }
