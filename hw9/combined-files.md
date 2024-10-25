@@ -98,7 +98,7 @@ function App() {
             (vidValue === "Дом" || vidValue === "Квартира") &&
             <div className='row'>
               <label htmlFor="">Комнат от: </label>
-              <input type="number" {...register("roomMin", { min: 0 })} />
+              <input type="number" {...register("roomMin", { min: { value: 1, message: "Минимум 1 комната" } })} />
               <label htmlFor="">до:</label>
               <input type="number" {...register("roomMax", { min: 0 })} />
             </div>
