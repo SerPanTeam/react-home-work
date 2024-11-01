@@ -1,6 +1,14 @@
 import { useLocation } from "react-router-dom";
+import axios from 'axios';
+import { useEffect } from "react";
+
 export default function Posts() {
   const loc = useLocation();
+  useEffect( () => {
+    const tags =  axios.get('https://dummyjson.com/posts/tag-list');
+    console.log(tags);
+  }, [])
+
 
   return (
     <article>
@@ -8,16 +16,30 @@ export default function Posts() {
         <h2>Posts</h2>
         <p>{loc.pathname}</p>
       </hgroup>
-      <p>
-        Esse non fugit sunt numquam. Totam eos iure culpa accusantium quidem
-        ipsa quia dicta eum, repellat repudiandae laborum dolorem obcaecati
-        corporis quam voluptates eaque natus adipisci molestiae, consectetur
-        quasi sit iste, iusto amet! Vel nobis distinctio repellendus, magnam
-        vero quasi? Possimus illo saepe cum quo? Corrupti non repellendus quis
-        ratione iure recusandae vero laudantium rerum similique consequatur modi
-        harum, consequuntur et? Placeat quaerat id dicta debitis excepturi quasi
-        vero totam architecto ipsa?
-      </p>
+      <div style={{ display: "flex", gap: "10px" }}>
+        <article>
+          <ul>
+            <li>Lorem ipsum dolor sit amet.</li>
+            <li>Lorem ipsum dolor sit amet.</li>
+            <li>Lorem ipsum dolor sit amet.</li>
+            <li>Lorem ipsum dolor sit amet.</li>
+            <li>Lorem ipsum dolor sit amet.</li>
+            <li>Lorem ipsum dolor sit amet.</li>
+            <li>Lorem ipsum dolor sit amet.</li>
+            <li>Lorem ipsum dolor sit amet.</li>
+          </ul>
+        </article>
+        <article>
+          <li>Lorem ipsum dolor sit amet.</li>
+          <li>Lorem ipsum dolor sit amet.</li>
+          <li>Lorem ipsum dolor sit amet.</li>
+          <li>Lorem ipsum dolor sit amet.</li>
+          <li>Lorem ipsum dolor sit amet.</li>
+          <li>Lorem ipsum dolor sit amet.</li>
+          <li>Lorem ipsum dolor sit amet.</li>
+          <li>Lorem ipsum dolor sit amet.</li>
+        </article>
+      </div>
     </article>
   );
 }
