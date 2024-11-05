@@ -3,10 +3,15 @@ import { useEffect, useState } from "react";
 import TagList from "../components/TagList";
 import axios from "axios";
 
+interface IPost{
+  title:string,
+  body:string,
+}
+
 export default function Post() {
   const loc = useLocation();
   const { postId } = useParams();
-  const [post, setPost] = useState();
+  const [post, setPost] = useState<IPost>();
 
   useEffect(() => {
     const url = "https://dummyjson.com/posts/" + postId;
