@@ -1,9 +1,9 @@
-// import "./App.css";
 import { Link, NavLink, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Contacts from "./pages/Contacts";
 import Posts from "./pages/Posts";
+import Post from "./pages/Post";
 
 function App() {
   return (
@@ -13,11 +13,9 @@ function App() {
           <nav>
             <ul>
               <li>
-                <strong>
-                  <h1>
-                    <Link to="/">[HomeWork-11]</Link>
-                  </h1>
-                </strong>
+                <h1>
+                  <Link to="/">[HomeWork-11]</Link>
+                </h1>
               </li>
             </ul>
             <ul>
@@ -32,7 +30,7 @@ function App() {
               <li>
                 <NavLink
                   className={({ isActive }) => (isActive ? "contrast" : "")}
-                  to="/posts/"
+                  to="/posts"
                 >
                   Posts
                 </NavLink>
@@ -40,7 +38,7 @@ function App() {
               <li>
                 <NavLink
                   className={({ isActive }) => (isActive ? "contrast" : "")}
-                  to="/about/"
+                  to="/about"
                 >
                   About
                 </NavLink>
@@ -48,7 +46,7 @@ function App() {
               <li>
                 <NavLink
                   className={({ isActive }) => (isActive ? "contrast" : "")}
-                  to="/contacts/"
+                  to="/contacts"
                 >
                   Contacts
                 </NavLink>
@@ -59,9 +57,11 @@ function App() {
         <main>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/posts/" element={<Posts />} />
-            <Route path="/about/" element={<About />} />
-            <Route path="/contacts/" element={<Contacts />} />
+            <Route path="/posts" element={<Posts />} />
+            <Route path="/posts/:tagName" element={<Posts />} />
+            <Route path="/post/:postId" element={<Post />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contacts" element={<Contacts />} />
           </Routes>
         </main>
         <footer>

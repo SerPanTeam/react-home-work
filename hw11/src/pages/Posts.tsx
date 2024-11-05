@@ -1,43 +1,22 @@
-import { useLocation } from "react-router-dom";
-import axios from 'axios';
-import { useEffect } from "react";
+import { useLocation, useParams } from "react-router-dom";
+import TagList from "../components/TagList";
+import PostsList from "../components/PostsList";
 
 export default function Posts() {
   const loc = useLocation();
-  useEffect( () => {
-    const tags =  axios.get('https://dummyjson.com/posts/tag-list');
-    console.log(tags);
-  }, [])
-
-
+  const { tagName } = useParams<{ tagName?: string }>();
   return (
     <article>
       <hgroup>
-        <h2>Posts</h2>
+        <h2>Posts{tagName ? ` with tag '${tagName}'` : ""}</h2>
         <p>{loc.pathname}</p>
       </hgroup>
       <div style={{ display: "flex", gap: "10px" }}>
         <article>
-          <ul>
-            <li>Lorem ipsum dolor sit amet.</li>
-            <li>Lorem ipsum dolor sit amet.</li>
-            <li>Lorem ipsum dolor sit amet.</li>
-            <li>Lorem ipsum dolor sit amet.</li>
-            <li>Lorem ipsum dolor sit amet.</li>
-            <li>Lorem ipsum dolor sit amet.</li>
-            <li>Lorem ipsum dolor sit amet.</li>
-            <li>Lorem ipsum dolor sit amet.</li>
-          </ul>
+          <TagList />
         </article>
         <article>
-          <li>Lorem ipsum dolor sit amet.</li>
-          <li>Lorem ipsum dolor sit amet.</li>
-          <li>Lorem ipsum dolor sit amet.</li>
-          <li>Lorem ipsum dolor sit amet.</li>
-          <li>Lorem ipsum dolor sit amet.</li>
-          <li>Lorem ipsum dolor sit amet.</li>
-          <li>Lorem ipsum dolor sit amet.</li>
-          <li>Lorem ipsum dolor sit amet.</li>
+          <PostsList tagName={tagName} />
         </article>
       </div>
     </article>
