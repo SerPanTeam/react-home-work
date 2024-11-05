@@ -22,7 +22,7 @@ function App() {
               <li>
                 <NavLink
                   className={({ isActive }) => (isActive ? "contrast" : "")}
-                  to="/"
+                  to="./"
                 >
                   Home
                 </NavLink>
