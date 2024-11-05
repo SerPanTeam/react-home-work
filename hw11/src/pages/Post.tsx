@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import TagList from "../components/TagList";
 import axios from "axios";
 
-interface IPost{
-  title:string,
-  body:string,
+interface IPost {
+  title: string;
+  body: string;
 }
 
 export default function Post() {

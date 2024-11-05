@@ -14,7 +14,7 @@ function App() {
             <ul>
               <li>
                 <h1>
-                  <Link to="./">[HomeWork-11]</Link>
+                  <Link to="/">[HomeWork-11]</Link>
                 </h1>
               </li>
             </ul>
@@ -22,7 +22,7 @@ function App() {
               <li>
                 <NavLink
                   className={({ isActive }) => (isActive ? "contrast" : "")}
-                  to="./"
+                  to="/"
                 >
                   Home
                 </NavLink>
@@ -30,7 +30,7 @@ function App() {
               <li>
                 <NavLink
                   className={({ isActive }) => (isActive ? "contrast" : "")}
-                  to="./posts"
+                  to="/posts"
                 >
                   Posts
                 </NavLink>
@@ -38,7 +38,7 @@ function App() {
               <li>
                 <NavLink
                   className={({ isActive }) => (isActive ? "contrast" : "")}
-                  to="./about"
+                  to="/about"
                 >
                   About
                 </NavLink>
@@ -46,7 +46,7 @@ function App() {
               <li>
                 <NavLink
                   className={({ isActive }) => (isActive ? "contrast" : "")}
-                  to="./contacts"
+                  to="/contacts"
                 >
                   Contacts
                 </NavLink>
@@ -56,12 +56,12 @@ function App() {
         </header>
         <main>
           <Routes>
-            <Route path="./" element={<Home />} />
-            <Route path="./posts" element={<Posts />} />
-            <Route path="./posts/:tagName" element={<Posts />} />
-            <Route path="./post/:postId" element={<Post />} />
-            <Route path="./about" element={<About />} />
-            <Route path="./contacts" element={<Contacts />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/posts" element={<Posts />} />
+            <Route path="/posts/:tagName" element={<Posts />} />
+            <Route path="/post/:postId" element={<Post />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contacts" element={<Contacts />} />
           </Routes>
         </main>
         <footer>
