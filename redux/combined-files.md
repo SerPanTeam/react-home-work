@@ -1,35 +1,3 @@
-# Структура проекта
-
-```plaintext
-├── node_modules
-├── public
-│   └── vite.svg
-├── src
-│   ├── assets
-│   │   └── react.svg
-│   ├── actions.ts
-│   ├── App.tsx
-│   ├── Counter.tsx
-│   ├── main.tsx
-│   ├── reducer.ts
-│   ├── store.ts
-│   └── vite-env.d.ts
-├── .gitignore
-├── codewr.js
-├── combined-files.md
-├── eslint.config.js
-├── index.html
-├── package-lock.json
-├── package.json
-├── README.md
-├── tsconfig.app.json
-├── tsconfig.json
-├── tsconfig.node.json
-└── vite.config.ts
-
-```
-
-# Файлы .ts, .tsx, .css
 
 ## src\actions.ts
 
@@ -68,12 +36,14 @@ import { connect } from "react-redux";
 import { inc1Action, inc10Action, inc100Action } from "./actions";
 
 const Counter = ({ count, inc1, inc10, inc100 }) => {
-  <div>
-    <h1>{count}</h1>
-    <button onClick={inc1}>+1</button>
-    <button onClick={inc10}>+10</button>
-    <button onClick={inc100}>+100</button>
-  </div>;
+  return (
+    <div>
+      <h1>{count}</h1>
+      <button onClick={inc1}>+1</button>
+      <button onClick={inc10}>+10</button>
+      <button onClick={inc100}>+100</button>
+    </div>
+  );
 };
 
 // Функция для преобразования состояния в пропсы компонента
@@ -118,11 +88,11 @@ const initState = { count: 0 };
 const counterReducer = (state = initState, action) => {
   switch (action.type) {
     case INC1:
-      return { state: state.count + 1 };
+      return { count: state.count + 1 };
     case INC10:
-      return { state: state.count + 10 };
+      return { count: state.count + 10 };
     case INC100:
-      return { state: state.count + 100 };
+      return { count: state.count + 100 };
     default:
       return state;
   }
@@ -143,44 +113,4 @@ const store = createStore(counterReducer);
 export default store;
 ```
 
-## src\vite-env.d.ts
-
-```typescript
-/// <reference types="vite/client" />
-
-```
-
-## vite.config.ts
-
-```typescript
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
-
-// https://vite.dev/config/
-export default defineConfig({
-  plugins: [react()],
-})
-
-```
-
-# Дополнительные файлы
-
-## index.html
-
-```html
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
-
-```
 
