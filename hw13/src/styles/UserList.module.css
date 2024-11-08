@@ -1,0 +1,21 @@
+input {
+    border: 1px solid black;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.options {
+    border: 1px solid black;
+    padding: 4px;
+    border-radius: 4px;
+    box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.5)
+}
+
+.option {
+    border-bottom: 1px solid black;
+}
+
+.option:hover{
+    background-color: darkgrey;
+    cursor: pointer;
+}
