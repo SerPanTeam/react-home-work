@@ -1,65 +1,105 @@
-import style from "../styles/UserList.module.css"
+import style from "../styles/UserList.module.css";
 
-import { connect } from 'react-redux';
-import { setFilter } from '../redux/actions';
-import { useRef, useState } from "react";
+import { connect } from "react-redux";
+import { setFilter } from "../redux/actions";
+import { useState, useRef } from "react";
+
+interface AppState {
+  filter: string;
+  list: User[];
+}
 
 interface User {
-    id: number,
-    name: string
+  id: number;
+  name: string;
 }
 
 interface ListProps {
-    options: User[],
-    filter: string,
-    setFilter: (filter: string) => void,
+  options: User[];
+  filter: string;
+  setFilter: (filter: string) => void;
 }
 
 export function UserList({ options, filter, setFilter }: ListProps) {
-    const [hasFocus, setHasFocus] = useState(false);
-    //let hasFocus = false;
-    const [inputValue, setinputValue] = useState("");
-    //const refInput = useRef();
+  const [hasFocus, setHasFocus] = useState(false);
+  const [inputValue, setinputValue] = useState("");
 
-    function onSelectOption(e) {
-        console.log(e.target.innerText);
-        setinputValue(e.target.innerText);
-        //refInput.current.value = e.target.innerText;
-        setHasFocus(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const optionsRef = useRef<HTMLDivElement>(null);
+
+  function onSelectOption(e: React.MouseEvent<HTMLDivElement>) {
+    console.log(e.currentTarget.innerText);
+    setinputValue(e.currentTarget.innerText);
+    setHasFocus(false);
+  }
+
+  function onChangeInput(e: React.ChangeEvent<HTMLInputElement>) {
+    setinputValue(e.currentTarget.value);
+    setFilter(e.currentTarget.value);
+    setHasFocus(true);
+  }
+
+  function onFocusInput(e: React.FocusEvent<HTMLInputElement>) {
+    setFilter(e.currentTarget.value);
+    setHasFocus(true);
+  }
+
+  function handleInputBlur(e: React.FocusEvent<HTMLInputElement>) {
+    const relatedTarget = e.relatedTarget as Node | null;
+    if (optionsRef.current && optionsRef.current.contains(relatedTarget)) {
+      return;
     }
+    setHasFocus(false);
+  }
 
-    function onChangeInput(e) {
-        //console.log(e.target.value);
-        setFilter(e.target.value);
-    }
-
-    return (
-        <div>
-            <input onChange={(e) => onChangeInput(e)} type="text" /* onBlur={() => setHasFocus(false)} */ onFocus={() => setHasFocus(true)} value={inputValue}/>
-            {(hasFocus) &&
-                <div className={style.options}>
-
-                    {options.map(val => {
-                        if (val.name.toLowerCase().includes(filter.toLowerCase())) {
-                            const name = val.name.replace(filter, `<b>${filter}</b>`)
-                            return <div onClick={(e) => onSelectOption(e)} key={val.id} className={style.option} dangerouslySetInnerHTML={{ __html: name }}></div>
-                        }
-                    })
-                    }
-
-                </div>
-            }
+  return (
+    <div>
+      <input
+        onChange={onChangeInput}
+        type="text"
+        onFocus={onFocusInput}
+        value={inputValue}
+        onBlur={handleInputBlur}
+        ref={inputRef}
+      />
+      {hasFocus && (
+        <div className={style.options} tabIndex={-1} ref={optionsRef}>
+          {options
+            .sort((a, b) => (a.name > b.name ? 1 : -1))
+            .map((val) => {
+              if (val.name.toLowerCase().includes(filter.toLowerCase())) {
+                const startPos = val.name
+                  .toLocaleLowerCase()
+                  .indexOf(filter.toLocaleLowerCase());
+                const newName =
+                  val.name.slice(0, startPos) +
+                  "<b>" +
+                  val.name.slice(startPos, startPos + filter.length) +
+                  "</b>" +
+                  val.name.slice(startPos + filter.length, val.name.length);
+                return (
+                  <div
+                    onClick={onSelectOption}
+                    key={val.id}
+                    className={style.option}
+                    dangerouslySetInnerHTML={{ __html: newName }}
+                  ></div>
+                );
+              }
+            })}
         </div>
-    );
+      )}
+    </div>
+  );
 }
 
-const mapStateToProps = (state) => ({
-    options: state.list,
-    filter: state.filter,
+const mapStateToProps = (state: AppState) => ({
+  options: state.list,
+  filter: state.filter,
 });
 
 const mapDispatchToProps = {
-    setFilter,
+  setFilter,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserList);

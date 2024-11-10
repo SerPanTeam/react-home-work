@@ -2,13 +2,16 @@ input {
     border: 1px solid black;
     padding: 4px;
     border-radius: 4px;
+    width: 100%;
 }
 
 .options {
     border: 1px solid black;
     padding: 4px;
     border-radius: 4px;
-    box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.5)
+    box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.5);
+    max-height: 200px;
+    overflow-y: auto;
 }
 
 .option {
