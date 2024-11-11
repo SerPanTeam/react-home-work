@@ -8,8 +8,8 @@ export default function FormUser() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const onSubmit = (data) => console.log(data);
-  console.log(errors);
+  const onSubmit = (data) => { console.log(data) };
+  //console.log(errors);
 
   return (
     <>
@@ -19,29 +19,42 @@ export default function FormUser() {
         <input
           type="text"
           placeholder="First name"
-          {...register("First name", { required: true, maxLength: 80 })}
+          {...register("firstName",
+            {
+              required: { value: true, message: "Name - required" },
+              maxLength: { value: 80, message: "Max Name - 80 chars" }
+            }
+          )
+          }
         />
-        {errors["First name"] && <p>{errors["First name"].message}</p>}
+        {/* {errors["firstName"] && <mark className="">{errors["firstName"].message}</mark>} */}
+        {errors["firstName"] && <mark className="">Error</mark>}
 
         <input
           type="text"
           placeholder="Last name"
-          {...register("Last name", { required: true, maxLength: 100 })}
+          {...register("lastName", { required: true, maxLength: 100 })}
         />
+        {errors["lastName"] && <mark className="">Error</mark>}
+
         <input
           type="text"
           placeholder="Email"
           {...register("Email", { required: true, pattern: /^\S+@\S+$/i })}
+
         />
+        {errors["Email"] && <mark className="">Error</mark>}
         <input
           type="tel"
           placeholder="Mobile number"
-          {...register("Mobile number", {
+          {...register("mobileNumber", {
             required: true,
             minLength: 6,
             maxLength: 12,
           })}
+
         />
+        {errors["mobileNumber"] && <mark className="">Error</mark>}
 
         <input type="submit" />
       </form>
