@@ -1,25 +1,40 @@
 import { useParams } from "react-router-dom";
 import { useForm, FieldValues } from "react-hook-form";
-//import { User } from "./Redux/interfaces";
+import { User } from "./Redux/interfaces";
 import { connect } from "react-redux";
-import { addUser } from "./Redux/actions";
+import { addUser, modUser } from "./Redux/actions";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
-export function FormUser({ users, addUser }) {
+export function FormUser({ users, addUser, modUser }: { users: User[], modUser: (user: User) => void, addUser: (user: User) => void }) {
   const { id } = useParams();
+
+  useEffect(() => {
+    console.log(object);
+    if (id) {
+      reset(users.find((val: User) => val.id == Number.parseInt(id)));
+    }
+
+  }, []);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm();
-  
+
   const navigate = useNavigate();
 
   const onSubmit = (data: FieldValues) => {
-    const newUser = { ...data };
-    console.log(addUser);
-    addUser(newUser);
-    console.log(users);
+    if (id) {
+      const newUser = { ...data, id: id };
+      modUser(newUser);
+    }
+    else {
+      const newUser = { ...data, id: Date.now() };
+      addUser(newUser);
+    }
     navigate("/");
   };
   //console.log(errors);
@@ -50,7 +65,7 @@ export function FormUser({ users, addUser }) {
         <input
           type="text"
           placeholder="Email"
-          {...register("Email", { required: true, pattern: /^\S+@\S+$/i })}
+          {...register("email", { required: true, pattern: /^\S+@\S+$/i })}
         />
         {errors["Email"] && <mark className="">Error!</mark>}
         <input
@@ -64,7 +79,7 @@ export function FormUser({ users, addUser }) {
         />
         {errors["mobileNumber"] && <mark className="">Error</mark>}
 
-        <input type="submit" />
+        <input type="submit" value={id ? `Save user` : "Create user"} />
       </form>
     </>
   );
@@ -77,7 +92,7 @@ const mapStateToProps = (state) => ({
 
 // Функция для отправки действия
 const mapDispatchToProps = {
-  addUser,
+  addUser, modUser,
 };
 
 // Подключение компонента к Redux с помощью connect
