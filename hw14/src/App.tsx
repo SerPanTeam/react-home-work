@@ -20,7 +20,7 @@ function App() {
               <Link to={"/"}>Home</Link>
             </li>
             <li>
-              <Link to={"/"}>Contacts</Link>
+              <Link to={"/user"}>Create new User</Link>
             </li>
           </ul>
         </nav>
