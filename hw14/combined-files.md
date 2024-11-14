@@ -7,15 +7,13 @@
 ├── src
 │   ├── assets
 │   │   └── react.svg
-│   ├── Redux
+│   ├── redux
 │   │   ├── actions.tsx
 │   │   ├── interfaces.ts
 │   │   ├── reducer.tsx
 │   │   └── store.tsx
-│   ├── App.css
 │   ├── App.tsx
 │   ├── FormUser.tsx
-│   ├── index.css
 │   ├── ListUser.tsx
 │   ├── main.tsx
 │   └── vite-env.d.ts
@@ -35,54 +33,6 @@
 ```
 
 # Файлы .ts, .tsx, .css
-
-## src\App.css
-
-```css
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
-
-```
 
 ## src\App.tsx
 
@@ -109,7 +59,7 @@ function App() {
               <Link to={"/"}>Home</Link>
             </li>
             <li>
-              <Link to={"/"}>Contacts</Link>
+              <Link to={"/user"}>Create new User</Link>
             </li>
           </ul>
         </nav>
@@ -134,25 +84,51 @@ export default App;
 
 ```typescript
 import { useParams } from "react-router-dom";
-import { useForm, FieldValues } from "react-hook-form";
-//import { User } from "./Redux/interfaces";
+import { useForm } from "react-hook-form";
+import { User, AppState } from "./redux/interfaces";
 import { connect } from "react-redux";
-import { addUser } from "./Redux/actions";
+import { addUser, modUser } from "./redux/actions";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
-export function FormUser({state, addUser}) {
+export function FormUser({
+  users,
+  addUser,
+  modUser,
+}: {
+  users: User[];
+  modUser: (user: User) => void;
+  addUser: (user: User) => void;
+}) {
   const { id } = useParams();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
-  const onSubmit = (data: FieldValues) => {
-    const newUser = { ...data };
-    console.log(addUser);
-    addUser(state, newUser);
-    console.log(state);
+    reset,
+  } = useForm<User>();
+
+  const navigate = useNavigate();
+
+  const onSubmit = (data: User) => {
+    if (id) {
+      const newUser = { ...data, id: Number(id) };
+      modUser(newUser);
+    } else {
+      const newUser = { ...data, id: Date.now() };
+      addUser(newUser);
+    }
+    navigate("/");
   };
   //console.log(errors);
+
+  useEffect(() => {
+    // console.log(object);
+    if (id) {
+      reset(users.find((val: User) => val.id == Number(id)));
+    }
+  }, [id, users, reset]);
 
   return (
     <>
@@ -180,9 +156,9 @@ export function FormUser({state, addUser}) {
         <input
           type="text"
           placeholder="Email"
-          {...register("Email", { required: true, pattern: /^\S+@\S+$/i })}
+          {...register("email", { required: true, pattern: /^\S+@\S+$/i })}
         />
-        {errors["Email"] && <mark className="">Error!</mark>}
+        {errors["email"] && <mark className="">Error!</mark>}
         <input
           type="tel"
           placeholder="Mobile number"
@@ -194,20 +170,21 @@ export function FormUser({state, addUser}) {
         />
         {errors["mobileNumber"] && <mark className="">Error</mark>}
 
-        <input type="submit" />
+        <input type="submit" value={id ? `Save user` : "Create user"} />
       </form>
     </>
   );
 }
 
 // Функция для получения данных из состояния
-const mapStateToProps = (state) => ({
-    state: state,
+const mapStateToProps = (state: AppState) => ({
+  users: state.users,
 });
 
 // Функция для отправки действия
 const mapDispatchToProps = {
   addUser,
+  modUser,
 };
 
 // Подключение компонента к Redux с помощью connect
@@ -215,109 +192,63 @@ export default connect(mapStateToProps, mapDispatchToProps)(FormUser);
 
 ```
 
-## src\index.css
-
-```css
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
-
-```
-
 ## src\ListUser.tsx
 
 ```typescript
 import { useNavigate } from "react-router-dom";
+import { User, AppState } from "./redux/interfaces";
+import { delUser } from "./redux/actions";
+import { connect } from "react-redux";
 
-export default function ListUser() {
+export function ListUser({
+  users,
+  delUser,
+}: {
+  users: User[];
+  delUser: (id: number) => void;
+}) {
   const navigate = useNavigate();
   return (
     <>
       <h2>List user</h2>
-      <button onClick={() => navigate("/user")}>Create new user</button>
-      <article style={{ display: "flex", justifyContent: "space-between" }}>
-        <p>User name 1111111111</p>
-        <div role="group1">
-          <button className="secondary">Edit</button>
-          <button className="contrast">Delete</button>
-        </div>
-      </article>
-
-      <article style={{ display: "flex", justifyContent: "space-between" }}>
-        <p>User name 1111111111</p>
-        <div role="group1">
-          <button className="secondary">Edit</button>
-          <button className="contrast">Delete</button>
-        </div>
-      </article>
+      {/* <button onClick={() => navigate("/user")}>Create new user</button> */}
+      {users.sort().map((val: User) => {
+        return (
+          <article
+            key={val.id}
+            style={{ display: "flex", justifyContent: "space-between" }}
+          >
+            <p>
+              {val.firstName} {val.lastName} tel:{val.mobileNumber} email:
+              {val.email}
+            </p>
+            <div role="group1" style={{ display: "flex", gap: "10px" }}>
+              <button className="" onClick={() => navigate("/user/" + val.id)}>
+                Edit
+              </button>
+              <button className="secondary" onClick={() => delUser(val.id)}>
+                Delete
+              </button>
+            </div>
+          </article>
+        );
+      })}
     </>
   );
 }
+
+// Функция для получения данных из состояния
+const mapStateToProps = (state: AppState) => ({
+  users: state.users,
+});
+
+// Функция для отправки действия
+const mapDispatchToProps = {
+  delUser,
+};
+
+// Подключение компонента к Redux с помощью connect
+export default connect(mapStateToProps, mapDispatchToProps)(ListUser);
 
 ```
 
@@ -329,7 +260,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
-import {store} from "./Redux/store.tsx";
+import {store} from "./redux/store.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
@@ -343,7 +274,7 @@ createRoot(document.getElementById("root")!).render(
 
 ```
 
-## src\Redux\actions.tsx
+## src\redux\actions.tsx
 
 ```typescript
 import { User } from "./interfaces";
@@ -354,43 +285,65 @@ export const DEL_USER = "DEL_USER";
 
 export const addUser = (user: User) => ({ type: ADD_USER, payload: user });
 export const modUser = (user: User) => ({ type: MOD_USER, payload: user });
-export const delUser = (user: User) => ({ type: DEL_USER, payload: user });
+export const delUser = (userID: number) => ({ type: DEL_USER, payload: userID });
 
 ```
 
-## src\Redux\interfaces.ts
+## src\redux\interfaces.ts
 
 ```typescript
 export interface Action {
   type: string;
-  payload: User;
+  payload: User | number;
 }
 
 export interface User {
+  id: number;
   firstName: string;
   lastName: string;
   email: string;
   mobileNumber: string;
 }
 
+export interface AppState {
+  users: User[];
+}
 ```
 
-## src\Redux\reducer.tsx
+## src\redux\reducer.tsx
 
 ```typescript
-import { ADD_USER } from "./actions";
-import {Action} from "./interfaces";
+import { ADD_USER, DEL_USER, MOD_USER } from "./actions";
+import { User } from "./interfaces";
+import { Action } from "./interfaces";
 
 const initState = {
   users: [],
 };
 
 export function userReducer(state = initState, action: Action) {
+  // console.log(action);
+
   switch (action.type) {
     case ADD_USER:
       return {
         ...state,
         users: [...state.users, action.payload],
+      };
+    case MOD_USER:
+      return {
+        ...state,
+        users: [
+          ...state.users.filter((val: User) => val.id != action.payload.id),
+          action.payload,
+        ],
+      };
+    case DEL_USER:
+      return {
+        ...state,
+        users: [
+          ...state.users.filter((val: User) => val.id != action.payload),
+        ],
       };
     default:
       return state;
@@ -399,14 +352,13 @@ export function userReducer(state = initState, action: Action) {
 
 ```
 
-## src\Redux\store.tsx
+## src\redux\store.tsx
 
 ```typescript
 import { createStore } from "redux";
 import { userReducer } from "./reducer";
 
-export const store = createStore(userReducer);
-
+export const store = createStore(userReducer as any);
 
 ```
 
@@ -426,6 +378,7 @@ import react from '@vitejs/plugin-react-swc'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  base: "/react-home-work/hw13/dist/",
 })
 
 ```
@@ -437,21 +390,20 @@ export default defineConfig({
 ```html
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HW 14</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
-    />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
 
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HW 14</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.pumpkin.min.css">
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
+</html>
 ```
 

@@ -1,43 +1,49 @@
 import { useParams } from "react-router-dom";
-import { useForm, FieldValues } from "react-hook-form";
-import { User } from "./Redux/interfaces";
+import { useForm } from "react-hook-form";
+import { User, AppState } from "./redux/interfaces";
 import { connect } from "react-redux";
-import { addUser, modUser } from "./Redux/actions";
+import { addUser, modUser } from "./redux/actions";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
-export function FormUser({ users, addUser, modUser }: { users: User[], modUser: (user: User) => void, addUser: (user: User) => void }) {
+export function FormUser({
+  users,
+  addUser,
+  modUser,
+}: {
+  users: User[];
+  modUser: (user: User) => void;
+  addUser: (user: User) => void;
+}) {
   const { id } = useParams();
-
-  useEffect(() => {
-    console.log(object);
-    if (id) {
-      reset(users.find((val: User) => val.id == Number.parseInt(id)));
-    }
-
-  }, []);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm();
+  } = useForm<User>();
 
   const navigate = useNavigate();
 
-  const onSubmit = (data: FieldValues) => {
+  const onSubmit = (data: User) => {
     if (id) {
-      const newUser = { ...data, id: id };
+      const newUser = { ...data, id: Number(id) };
       modUser(newUser);
-    }
-    else {
+    } else {
       const newUser = { ...data, id: Date.now() };
       addUser(newUser);
     }
     navigate("/");
   };
   //console.log(errors);
+
+  useEffect(() => {
+    // console.log(object);
+    if (id) {
+      reset(users.find((val: User) => val.id == Number(id)));
+    }
+  }, [id, users, reset]);
 
   return (
     <>
@@ -67,7 +73,7 @@ export function FormUser({ users, addUser, modUser }: { users: User[], modUser: 
           placeholder="Email"
           {...register("email", { required: true, pattern: /^\S+@\S+$/i })}
         />
-        {errors["Email"] && <mark className="">Error!</mark>}
+        {errors["email"] && <mark className="">Error!</mark>}
         <input
           type="tel"
           placeholder="Mobile number"
@@ -86,13 +92,14 @@ export function FormUser({ users, addUser, modUser }: { users: User[], modUser: 
 }
 
 // Функция для получения данных из состояния
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: AppState) => ({
   users: state.users,
 });
 
 // Функция для отправки действия
 const mapDispatchToProps = {
-  addUser, modUser,
+  addUser,
+  modUser,
 };
 
 // Подключение компонента к Redux с помощью connect

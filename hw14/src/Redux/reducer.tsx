@@ -7,7 +7,7 @@ const initState = {
 };
 
 export function userReducer(state = initState, action: Action) {
-  console.log(action);
+  // console.log(action);
 
   switch (action.type) {
     case ADD_USER:
@@ -16,14 +16,21 @@ export function userReducer(state = initState, action: Action) {
         users: [...state.users, action.payload],
       };
     case MOD_USER:
+      const userToModify = action.payload as User;
+
       return {
         ...state,
-        users: [...state.users.filter((val: User) => val.id != action.payload.id), action.payload],
+        users: [
+          ...state.users.filter((val: User) => val.id != userToModify.id ),
+          action.payload,
+        ],
       };
     case DEL_USER:
       return {
         ...state,
-        users: [...state.users.filter((val: User) => val.id != action.payload)],
+        users: [
+          ...state.users.filter((val: User) => val.id != action.payload),
+        ],
       };
     default:
       return state;

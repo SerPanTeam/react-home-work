@@ -10,3 +10,7 @@ export interface User {
   email: string;
   mobileNumber: string;
 }
+
+export interface AppState {
+  users: User[];
+}
