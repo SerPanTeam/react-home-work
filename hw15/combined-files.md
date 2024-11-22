@@ -8,6 +8,7 @@
 │   ├── assets
 │   │   └── react.svg
 │   ├── App.tsx
+│   ├── interfaces.ts
 │   ├── main.tsx
 │   ├── UserForm.tsx
 │   ├── UserList.tsx
@@ -32,12 +33,71 @@
 ## src\App.tsx
 
 ```typescript
-import { AppBar, Toolbar, Typography, Container, CssBaseline, Button } from '@mui/material';
-import ContactsIcon from '@mui/icons-material/Contacts';
-import UserList from './UserList';
-import UserForm from './UserForm';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Container,
+  CssBaseline,
+  Button,
+  TextField,
+} from "@mui/material";
+import ContactsIcon from "@mui/icons-material/Contacts";
+import UserList from "./UserList";
+import UserForm from "./UserForm";
+import { useCallback, useState } from "react";
+import { faker } from "@faker-js/faker";
+import { User } from "./interfaces";
+const fullUserArray: User[] = [];
 
 function App() {
+  const [usersArray, setUsersArray] = useState<User[]>([]);
+  const [open, setOpen] = useState(false);
+  const [filter, setFilter] = useState("");
+
+  // const handleClickOpen = () => {
+  //   setOpen(true);
+  // };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOnChangeFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilter(event.target.value);
+    setUsersArray(filterUsersMemo(event.target.value));
+  };
+
+  function filterUsers(filter: string) {
+    //const newUserArray: User[] = [];
+
+    return fullUserArray.filter((val) =>
+      val.name.toLowerCase().includes(filter.toLowerCase())
+    );
+  }
+
+  const filterUsersMemo = useCallback(
+    (filter: string) => filterUsers(filter),
+    []
+  );
+
+  const handleClickGenerate = () => {
+    //const newArr = [];
+    for (let i = 0; i < 1000; i++) {
+      const firstName = faker.person.firstName();
+      const lastName = faker.person.lastName();
+      fullUserArray.push({
+        id: i,
+        name: firstName + " " + lastName,
+        email: faker.internet.email({
+          firstName: firstName,
+          lastName: lastName,
+        }),
+      });
+    }
+    // console.log(newArr);
+    setUsersArray(fullUserArray);
+  };
 
   return (
     <>
@@ -46,18 +106,40 @@ function App() {
         <Toolbar>
           <ContactsIcon sx={{ mr: 2 }} />
           <Typography sx={{ flexGrow: 1 }}>Home work #15</Typography>
-          <Button color="inherit">Add user</Button>
+          <Button color="inherit" onClick={handleClickGenerate}>
+            Generate 1000 Users
+          </Button>
+          {/* <Button color="inherit" onClick={handleClickOpen}>
+            Add user
+          </Button> */}
         </Toolbar>
       </AppBar>
       <Container maxWidth="lg" sx={{ mt: { xs: 9, sm: 11 } }}>
-        <UserList />
-        <UserForm />
+        <TextField
+          label="Filter by Name"
+          variant="outlined"
+          value={filter}
+          onChange={(e) => handleOnChangeFilter(e)}
+        />
+        <UserList usersArray={usersArray} />
+        <UserForm open={open} handleClose={handleClose} />
       </Container>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
+
+```
+
+## src\interfaces.ts
+
+```typescript
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+}
 
 ```
 
@@ -79,105 +161,156 @@ createRoot(document.getElementById('root')!).render(
 ## src\UserForm.tsx
 
 ```typescript
-import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Button } from '@mui/material';
-import { useState } from 'react';
-function UserForm() {
-    const [open, setOpen] = useState(false);
-
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    return (
-        <Dialog
-            open={open}
-            onClose={handleClose}
-            PaperProps={{
-                component: 'form',
-                onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
-                    event.preventDefault();
-                    const formData = new FormData(event.currentTarget);
-                    const formJson = Object.fromEntries((formData as any).entries());
-                    const email = formJson.email;
-                    console.log(email);
-                    handleClose();
-                },
-            }}
-        >
-            <DialogTitle>Subscribe</DialogTitle>
-            <DialogContent>
-                <DialogContentText>
-                    To subscribe to this website, please enter your email address here. We
-                    will send updates occasionally.
-                </DialogContentText>
-                <TextField
-                    autoFocus
-                    required
-                    margin="dense"
-                    id="name"
-                    name="email"
-                    label="Email Address"
-                    type="email"
-                    fullWidth
-                    variant="standard"
-                />
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={handleClose}>Cancel</Button>
-                <Button type="submit">Subscribe</Button>
-            </DialogActions>
-        </Dialog>)
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  TextField,
+  DialogActions,
+  Button,
+} from "@mui/material";
+// import { useState } from 'react';
+function UserForm({
+  open,
+  handleClose,
+}: {
+  open: boolean;
+  handleClose: () => void;
+}) {
+  return (
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      PaperProps={{
+        component: "form",
+        onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+          event.preventDefault();
+          const formData = new FormData(event.currentTarget);
+          const formJson = Object.fromEntries((formData as any).entries());
+          const email = formJson.email;
+          console.log(email);
+          handleClose();
+        },
+      }}
+    >
+      <DialogTitle>Subscribe</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          To subscribe to this website, please enter your email address here. We
+          will send updates occasionally.
+        </DialogContentText>
+        <TextField
+          autoFocus
+          required
+          margin="dense"
+          id="name"
+          name="email"
+          label="Email Address"
+          type="email"
+          fullWidth
+          variant="standard"
+        />
+        <TextField
+          autoFocus
+          required
+          margin="dense"
+          id="name"
+          name="email"
+          label="Email Address"
+          type="email"
+          fullWidth
+          variant="standard"
+        />
+        <TextField
+          autoFocus
+          required
+          margin="dense"
+          id="name"
+          name="email"
+          label="Email Address"
+          type="email"
+          fullWidth
+          variant="standard"
+        />
+        <TextField
+          autoFocus
+          required
+          margin="dense"
+          id="name"
+          name="email"
+          label="Email Address"
+          type="email"
+          fullWidth
+          variant="standard"
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose}>Cancel</Button>
+        <Button type="submit">Subscribe</Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 export default UserForm;
+
 ```
 
 ## src\UserList.tsx
 
 ```typescript
-import { Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
+import {
+//   IconButton,
+  Paper,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+} from "@mui/material";
+// import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+// import EditIcon from "@mui/icons-material/Edit";
+import { User } from "./interfaces";
 
-function UserList() {
-    return (
-        <TableContainer component={Paper}>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Name</TableCell>
-                        <TableCell align="right">UserName</TableCell>
-                        <TableCell align="right">Email</TableCell>
-                        <TableCell align="right">Phone</TableCell>
-                        <TableCell align="right">Age</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-
-                    <TableRow>
-                        <TableCell component="th" scope="row"> 0 </TableCell>
-                        <TableCell align="right">1</TableCell>
-                        <TableCell align="right">2</TableCell>
-                        <TableCell align="right">3</TableCell>
-                        <TableCell align="right">4</TableCell>
-                    </TableRow>
-
-                    <TableRow>
-                        <TableCell component="th" scope="row"> 0 </TableCell>
-                        <TableCell align="right">1</TableCell>
-                        <TableCell align="right">2</TableCell>
-                        <TableCell align="right">3</TableCell>
-                        <TableCell align="right">4</TableCell>
-                    </TableRow>
-
-                </TableBody>
-            </Table>
-        </TableContainer>)
+function UserList({ usersArray }: { usersArray: User[] }) {
+  return (
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell align="left">ID</TableCell>
+            <TableCell align="right">UserName</TableCell>
+            <TableCell align="right">Email</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {usersArray.map((val) => {
+            return (
+              <TableRow key={val.id}>
+                <TableCell align="right">{val.id}</TableCell>
+                <TableCell align="right">{val.name}</TableCell>
+                <TableCell align="right">{val.email}</TableCell>
+                {/* <TableCell align="right">
+                  <IconButton color="secondary">
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton color="secondary">
+                    <DeleteForeverIcon />
+                  </IconButton>
+                </TableCell> */}
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
 }
 
-export default UserList
+export default UserList;
+
 ```
 
 ## src\vite-env.d.ts

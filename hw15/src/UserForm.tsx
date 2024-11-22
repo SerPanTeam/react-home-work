@@ -13,7 +13,7 @@ function UserForm({
   handleClose,
 }: {
   open: boolean;
-  handleClose: () => null;
+  handleClose: () => void;
 }) {
   return (
     <Dialog
