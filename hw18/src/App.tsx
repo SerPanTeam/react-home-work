@@ -10,7 +10,7 @@ function App() {
           <img src="/img/banner.jpg" alt="" />
           <h2 className="text-[36px] font-black leading-none">Товары</h2>
           <hr className="bg-gray-600 mx-4"></hr>
-          <div>
+          <div className="flex gap-5 justify-between">
             <div className="w-[30%] rounded-[42px] border border-black/15">
               Мужские Кроссовки Nike Air Zoom Pegasus
             </div>
