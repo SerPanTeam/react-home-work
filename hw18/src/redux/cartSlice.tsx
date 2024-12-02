@@ -4,6 +4,7 @@ interface CartItem {
   id: number;
   name: string;
   price: number;
+  image:string;
   quantity: number;
 }
 
@@ -22,9 +23,12 @@ const cartSlice = createSlice({
     addItem: (state, action: PayloadAction<CartItem>) => {
       state.items.push(action.payload);
     },
+    delItem: (state, action: PayloadAction<number>) => {
+      state.items = state.items.filter((val) => val.id != action.payload);
+    },
   },
 });
 
-export const { addItem } = cartSlice.actions;
+export const { addItem, delItem } = cartSlice.actions;
 
 export default cartSlice.reducer;

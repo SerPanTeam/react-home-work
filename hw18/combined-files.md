@@ -16,8 +16,12 @@
 │   │   ├── Cart.tsx
 │   │   ├── Contacts.tsx
 │   │   └── Home.tsx
+│   ├── redux
+│   │   ├── cartSlice.tsx
+│   │   └── store.tsx
 │   ├── App.tsx
 │   ├── index.css
+│   ├── interfaces.ts
 │   ├── main.tsx
 │   └── vite-env.d.ts
 ├── .gitignore
@@ -48,6 +52,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Cart from "./pages/Cart";
 import Contacts from "./pages/Contacts";
+
+
 
 function App() {
   return (
@@ -163,31 +169,95 @@ export default function Header() {
 @tailwind utilities;
 ```
 
+## src\interfaces.ts
+
+```typescript
+export interface Product {
+    id: number;
+    price: number;
+    name: string;
+    image: string;
+  }
+```
+
 ## src\main.tsx
 
 ```typescript
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
+import { createRoot } from "react-dom/client";
+import "./index.css";
+import App from "./App.tsx";
+import { Provider } from "react-redux";
+import { store } from "./redux/store.tsx";
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+createRoot(document.getElementById("root")!).render(
+  <Provider store={store}>
     <App />
-  </StrictMode>,
-)
+  </Provider>
+);
 
 ```
 
 ## src\pages\Cart.tsx
 
 ```typescript
+import { useSelector, useDispatch } from "react-redux";
+import { delItem } from "../redux/cartSlice";
+import { Product } from "../interfaces";
+import { RootState } from '../redux/store';
+
+
 export default function Cart() {
+  const cartItems = useSelector((state: RootState) => state.cart.items);
+  const dispatch = useDispatch();
+
+  const handleOnClickButton = (id: number) => {
+    dispatch(delItem(id));
+  };
+
   return (
     <>
-      <h1 className="text-black font-montserrat text-[36px] font-bold leading-normal">
+      <h1 className="text-black text-[36px] font-bold leading-normal">
         Корзина
       </h1>
+      <div className="flex gap-10">
+        <div className="w-[70%] flex flex-col gap-4">
+          {cartItems.map((val: Product) => {
+            return (
+              <div className="bg-gray-100 rounded-[10px] p-5 flex gap-5 justify-between">
+                <img width="90px" src={val.image} alt="" />
+                <p>{val.name}</p>
+                <p>$ {val.price}</p>
+                <button
+                  onClick={() => handleOnClickButton(val.id)}
+                  className="w-10 h-10 rounded-full border border-gray-400 text-gray-400 flex items-center justify-center bg-white hover:invert transition duration-300"
+                >
+                  -
+                </button>
+              </div>
+            );
+          })}
+        </div>
+        <div className="w-[30%]">
+          <p className="text-black text-[36px]  font-bold leading-normal text-center">
+            Итого
+          </p>
+          {cartItems.map((val: Product) => {
+            return (
+              <p>
+                {val.name} - {val.price}
+              </p>
+            );
+          })}
+          <hr />
+          <p>
+            Сумма:{" "}
+            {cartItems.reduce(
+              (acc: number, cur: Product) => acc + +cur.price,
+              0
+            )}
+          </p>
+        </div>
+      </div>
     </>
   );
 }
@@ -259,14 +329,15 @@ export default function Contacts() {
 ```typescript
 import { useEffect, useState } from "react";
 import axios from "axios";
+
+import { useDispatch } from "react-redux";
+import { addItem } from "../redux/cartSlice";
+
+import { Product } from "../interfaces";
+
 const PRODUCT_URL = "https://674d748d635bad45618b60ec.mockapi.io/productData";
 
-interface Product {
-    id: number;
-    price: number;
-    name: string;
-    image: string;
-  }
+
 
 export default function Home() {
   const [prods, setProds] = useState([]);
@@ -279,6 +350,11 @@ export default function Home() {
 
     fetchProds();
   }, []);
+
+  const dispatch = useDispatch();
+  const handleOnClickButton = (product: Product) => {
+    dispatch(addItem({ ...product, quantity: 1 }));
+  };
 
   return (
     <>
@@ -301,7 +377,10 @@ export default function Home() {
                 <p className="text-black font-inter text-[24px] font-bold leading-normal">
                   ${val.price}
                 </p>
-                <button className="w-10 h-10 rounded-full border border-gray-400 text-gray-400 flex items-center justify-center bg-white hover:invert transition duration-300">
+                <button
+                  onClick={() => handleOnClickButton(val)}
+                  className="w-10 h-10 rounded-full border border-gray-400 text-gray-400 flex items-center justify-center bg-white hover:invert transition duration-300"
+                >
                   +
                 </button>
               </div>
@@ -312,6 +391,61 @@ export default function Home() {
     </>
   );
 }
+
+```
+
+## src\redux\cartSlice.tsx
+
+```typescript
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+interface CartItem {
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+}
+
+interface CartState {
+  items: CartItem[];
+}
+
+const initialState: CartState = {
+  items: [],
+};
+
+const cartSlice = createSlice({
+  name: "cart",
+  initialState,
+  reducers: {
+    addItem: (state, action: PayloadAction<CartItem>) => {
+      state.items.push(action.payload);
+    },
+    delItem: (state, action: PayloadAction<number>) => {
+      state.items = state.items.filter((val) => val.id != action.payload);
+    },
+  },
+});
+
+export const { addItem, delItem } = cartSlice.actions;
+
+export default cartSlice.reducer;
+
+```
+
+## src\redux\store.tsx
+
+```typescript
+import { configureStore } from "@reduxjs/toolkit";
+import cartReducer from "./cartSlice";
+
+export const store = configureStore({
+  reducer: {
+    cart: cartReducer,
+  },
+});
+
+export type RootState = ReturnType<typeof store.getState>;
 
 ```
 
@@ -331,6 +465,8 @@ import react from '@vitejs/plugin-react-swc'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  base: "/react-home-work/hw18/dist/",
+
 })
 
 ```

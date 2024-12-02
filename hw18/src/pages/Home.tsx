@@ -1,17 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-import { useDispatch } from 'react-redux';
-import { addItem } from './redux/cartSlice';
+import { useDispatch } from "react-redux";
+import { addItem } from "../redux/cartSlice";
+
+import { Product } from "../interfaces";
 
 const PRODUCT_URL = "https://674d748d635bad45618b60ec.mockapi.io/productData";
 
-interface Product {
-    id: number;
-    price: number;
-    name: string;
-    image: string;
-  }
+
 
 export default function Home() {
   const [prods, setProds] = useState([]);
@@ -26,9 +23,9 @@ export default function Home() {
   }, []);
 
   const dispatch = useDispatch();
-  const handleOnClickButton = () =>{
-    dispatch
-  }
+  const handleOnClickButton = (product: Product) => {
+    dispatch(addItem({ ...product, quantity: 1 }));
+  };
 
   return (
     <>
@@ -51,7 +48,10 @@ export default function Home() {
                 <p className="text-black font-inter text-[24px] font-bold leading-normal">
                   ${val.price}
                 </p>
-                <button onClick={()=>handleOnClickButton(val)} className="w-10 h-10 rounded-full border border-gray-400 text-gray-400 flex items-center justify-center bg-white hover:invert transition duration-300">
+                <button
+                  onClick={() => handleOnClickButton(val)}
+                  className="w-10 h-10 rounded-full border border-gray-400 text-gray-400 flex items-center justify-center bg-white hover:invert transition duration-300"
+                >
                   +
                 </button>
               </div>
