@@ -1,30 +1,29 @@
-import Footer from "./Footer";
-import Header from "./Header";
+import Footer from "./components/Footer";
+import Header from "./components/Header";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Cart from "./pages/Cart";
+import Contacts from "./pages/Contacts";
+
+
 
 function App() {
   return (
-    <div className="font-montserrat">
-      <Header />
-      <div className="w-full h-min-[calc(100vh-457px)] bg-white py-7">
-        <main className="max-w-[1024px] h-full mx-auto">
-          <img src="/img/banner.jpg" alt="" />
-          <h2 className="text-[36px] font-black leading-none">Товары</h2>
-          <hr className="bg-gray-600 mx-4"></hr>
-          <div className="flex gap-5 justify-between">
-            <div className="w-[30%] rounded-[42px] border border-black/15">
-              Мужские Кроссовки Nike Air Zoom Pegasus
-            </div>
-            <div className="w-[30%] rounded-[42px] border border-black/15">
-              Мужские Кроссовки Nike Air Zoom Pegasus
-            </div>
-            <div className="w-[30%] rounded-[42px] border border-black/15">
-              Мужские Кроссовки Nike Air Zoom Pegasus
-            </div>
-          </div>
-        </main>
+    <BrowserRouter>
+      <div className="font-montserrat">
+        <Header />
+        <div className="w-full h-min-[calc(100vh-457px)] bg-white py-7">
+          <main className="max-w-[1024px] h-full mx-auto">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/contacts" element={<Contacts />} />{" "}
+            </Routes>
+          </main>
+        </div>
+        <Footer />
       </div>
-      <Footer />
-    </div>
+    </BrowserRouter>
   );
 }
 

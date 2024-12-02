@@ -1,3 +1,5 @@
+import { NavLink } from "react-router-dom";
+
 export default function Header() {
   return (
     <div className="w-full h-[110px] bg-customGray">
@@ -8,13 +10,28 @@ export default function Header() {
         <nav>
           <ul className="text-white/50 flex gap-8 text-[15px] font-semibold">
             <li className="hover:text-white">
-              <a href="/">Главная</a>
+              <NavLink
+                className={({ isActive }) => (isActive ? "text-white" : "")}
+                to="/"
+              >
+                Главная
+              </NavLink>
             </li>
             <li className="hover:text-white">
-              <a href="/">Корзина</a>
+              <NavLink
+                className={({ isActive }) => (isActive ? "text-white" : "")}
+                to="/cart"
+              >
+                Корзина
+              </NavLink>
             </li>
             <li className="hover:text-white">
-              <a href="/">Контакты</a>
+              <NavLink
+                className={({ isActive }) => (isActive ? "text-white" : "")}
+                to="/contacts"
+              >
+                Контакты
+              </NavLink>
             </li>
           </ul>
         </nav>

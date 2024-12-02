@@ -1,3 +1,4 @@
+import { Facebook, Twitter, Instagram } from "lucide-react";
 export default function Footer() {
   return (
     <div className="w-full h-[347px] bg-customGray ">
@@ -8,11 +9,19 @@ export default function Footer() {
             <p>8 800 000 00 00</p>
             <p>emailexample@email.com</p>
           </div>
-          <div>Social-links</div>
+          <div className="flex justify-evenly gap-8">
+            <Facebook />
+            <Twitter />
+            <Instagram />
+          </div>
         </div>
         <div className="flex justify-between items-end">
           <div>2024 Сникер-магазин. Все права защищены</div>
-          <div>Введите свой email:</div>
+          <input
+            type="email"
+            placeholder="example@mail.com"
+            className="w-80 bg-transparent border-b border-white/50 text-white focus:outline-none focus:border-white"
+          />
         </div>
       </footer>
     </div>
