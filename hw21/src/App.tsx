@@ -26,7 +26,7 @@ function App() {
               <p>{question.question}</p>
               {question.answer.map((answer, answerID) => {
                 return (
-                  <div>
+                  <div key={"l" + questionID + "-" + answerID}>
                     <input
                       key={answerID}
                       type="radio"
