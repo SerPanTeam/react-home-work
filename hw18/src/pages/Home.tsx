@@ -8,8 +8,6 @@ import { Product } from "../interfaces";
 
 const PRODUCT_URL = "https://674d748d635bad45618b60ec.mockapi.io/productData";
 
-
-
 export default function Home() {
   const [prods, setProds] = useState([]);
   useEffect(() => {
