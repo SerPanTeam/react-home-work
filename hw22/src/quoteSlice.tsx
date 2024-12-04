@@ -4,8 +4,8 @@ import axios from "axios";
 interface Quote {
   quoteText: string;
   quoteAutor: string;
-  status: string;
-  error: null | string;
+  status: string | null | undefined;
+  error: null | string | undefined;
 }
 
 const initialState: Quote = {
@@ -15,7 +15,6 @@ const initialState: Quote = {
   error: null,
 };
 
-// Асинхронное действие для получения случайной цитаты
 export const fetchRandomQuote = createAsyncThunk(
   "quote/fetchRandomQuote",
   async () => {
@@ -39,6 +38,7 @@ const quoteSlice = createSlice({
       })
       .addCase(fetchRandomQuote.fulfilled, (state, action) => {
         state.status = "succeeded";
+        console.log(action);
       })
       .addCase(fetchRandomQuote.rejected, (state, action) => {
         state.status = "failed";
@@ -48,4 +48,4 @@ const quoteSlice = createSlice({
 });
 
 export default quoteSlice.reducer;
-export const { newQuote } = quoteSlice.actions;
+export const { newQuote, fetchRandomQuote } = quoteSlice.actions;
