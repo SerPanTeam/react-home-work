@@ -84,31 +84,45 @@
 ## src\App.tsx
 
 ```typescript
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "./store";
-import { newQuote } from "./quoteSlice";
+import { fetchRandomQuote } from "./quoteSlice"; // Асинхронное действие
+import { useAppDispatch } from "./store"; // Кастомный хук для типизированного dispatch
+import { useEffect } from "react";
 
 function App() {
-  const dispach = useDispatch();
   const quote = useSelector((state: RootState) => state.quote);
+  const dispatch = useAppDispatch(); // Используем типизированный dispatch
+
+  useEffect(() => {
+    dispatch(fetchRandomQuote());
+  }, [dispatch]);
 
   return (
     <>
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
         <div className="p-6 bg-white rounded-lg shadow-lg">
           <h1 className="text-2xl">Random Quote Generator</h1>
-          <p className="italic mt-10">{quote.quoteText}</p>
-          <p className="text-xl font-bold mt-10 text-right">
-            {quote.quoteAutor}
-          </p>
-          <button
-            onClick={() => {
-              dispach(newQuote());
-            }}
-            className="bg-blue-200 w-full p-5 mt-5 rounded-lg shadow-lg"
-          >
-            Get new Quote!
-          </button>
+          {quote.status === "loading" && <p>Loading...</p>}
+          {quote.status === "failed" && (
+            <p className="text-red-500">Error: {quote.error}</p>
+          )}{" "}
+          {quote.status === "succeeded" && (
+            <div>
+              <p className="italic mt-10">{quote.quoteText}</p>
+              <p className="text-xl font-bold mt-10 text-right">
+                {quote.quoteAutor}
+              </p>
+              <button
+                onClick={() => {
+                  dispatch(fetchRandomQuote());
+                }}
+                className="bg-blue-200 w-full p-5 mt-5 rounded-lg shadow-lg"
+              >
+                Get new Quote!
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </>
@@ -188,6 +202,9 @@ const quoteSlice = createSlice({
       .addCase(fetchRandomQuote.fulfilled, (state, action) => {
         state.status = "succeeded";
         console.log(action);
+        state.status = "succeeded"; // Загрузка завершена успешно
+        state.quoteText = action.payload.content; // Обновлен текст цитаты
+        state.quoteAutor = action.payload.author; // Обновлен автор цитаты
       })
       .addCase(fetchRandomQuote.rejected, (state, action) => {
         state.status = "failed";
@@ -197,7 +214,7 @@ const quoteSlice = createSlice({
 });
 
 export default quoteSlice.reducer;
-export const { newQuote, fetchRandomQuote } = quoteSlice.actions;
+export const { newQuote} = quoteSlice.actions;
 
 ```
 
@@ -206,6 +223,8 @@ export const { newQuote, fetchRandomQuote } = quoteSlice.actions;
 ```typescript
 import { configureStore } from "@reduxjs/toolkit";
 import quoteSlice from "./quoteSlice";
+import { useDispatch } from "react-redux";
+
 
 export const store = configureStore({
   reducer: {
@@ -215,6 +234,11 @@ export const store = configureStore({
 
 export type RootState = ReturnType<typeof store.getState>;
 
+// Типизация dispatch
+export type AppDispatch = typeof store.dispatch;
+
+// Кастомный хук для типизированного dispatch
+export const useAppDispatch: () => AppDispatch = useDispatch;
 ```
 
 ## src\vite-env.d.ts

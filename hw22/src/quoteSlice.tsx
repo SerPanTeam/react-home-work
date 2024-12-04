@@ -37,8 +37,10 @@ const quoteSlice = createSlice({
         state.status = "loading";
       })
       .addCase(fetchRandomQuote.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        console.log(action);
+
+        state.status = "succeeded"; 
+        state.quoteText = action.payload.content; 
+        state.quoteAutor = action.payload.author; 
       })
       .addCase(fetchRandomQuote.rejected, (state, action) => {
         state.status = "failed";
@@ -48,4 +50,4 @@ const quoteSlice = createSlice({
 });
 
 export default quoteSlice.reducer;
-export const { newQuote, fetchRandomQuote } = quoteSlice.actions;
+export const { newQuote} = quoteSlice.actions;
