@@ -18,7 +18,7 @@ const initialState: Quote = {
 export const fetchRandomQuote = createAsyncThunk(
   "quote/fetchRandomQuote",
   async () => {
-    const response = await axios.get("https://api.quotable.io/random");
+    const response = await axios.get("http://api.quotable.io/random");
     return response.data;
   }
 );
